@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#164e42">
+  <meta name="description" content="เดโม่วิจัยรู้จำท่ามือผ่านกล้อง และฝึกโมเดล LSTM จากตัวอย่างของคุณ">
+  <title>SNAPSIGN — ห้องทดลองภาษามือ</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23164e42'/%3E%3Ctext x='7' y='29' font-size='27'%3E✋%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-mark">s<span>✳</span></span><span>snapsign<span class="brand-sub">RESEARCH STUDIO</span></span></a>
+    <div class="nav-caption">พื้นที่ทำงาน</div>
+    <nav aria-label="เมนูหลัก">
+      <a class="nav-item active" href="#workspace"><span>◉</span> ทดลองรู้จำ <span class="nav-arrow">↗</span></a>
+      <a class="nav-item" href="#learning"><span>▦</span> ชุดข้อมูลของฉัน</a>
+      <a class="nav-item" href="#guide"><span>ⓘ</span> วิธีใช้งาน</a>
+    </nav>
+    <div class="sidebar-note"><span class="tiny-dot"></span> เรียนรู้จากการลงมือทำ<p>จากภาพและการเคลื่อนไหว<br>สู่การสื่อสารที่เข้าใจกัน</p><span class="version">PROTOTYPE / 01</span></div>
+    <div class="sidebar-footer">โครงงานคอมพิวเตอร์วิทัศน์<br>และการเรียนรู้เชิงลึก <span>2026</span></div>
+  </aside>
+  <main id="workspace">
+    <header class="topbar"><span>ห้องทดลอง <span class="slash">/</span> <strong>รู้จำท่ามือ</strong></span><span class="local-badge"><span class="tiny-dot"></span> ประมวลผลในเบราว์เซอร์</span></header>
+    <section class="intro">
+      <div><div class="eyebrow">SEE THE SIGN. START A CONVERSATION.</div><h1>ให้ทุกท่าทาง<span>เริ่มบทสนทนา</span><span class="heading-spark">✳</span></h1><p>ทดลองรู้จำท่ามือผ่านกล้อง แล้วสร้างโมเดลจากตัวอย่างของคุณเอง</p></div>
+      <div class="intro-stamp"><span>✋</span><small>พื้นที่ทดลอง<br>เพื่อการสื่อสาร</small></div>
+    </section>
+    <div class="notice"><span class="notice-icon">i</span><p><strong>เดโม่สำหรับงานวิจัย</strong> ท่าพื้นฐานเป็นตัวอย่างจาก MediaPipe ยังไม่ใช่ระบบแปลภาษามือไทยระดับประโยค</p><span class="notice-tag">DEMO</span></div>
+    <section class="workspace-grid" aria-label="กล้องและผลการรู้จำ">
+      <div class="camera-column">
+        <div class="section-top"><h2><span class="step">01</span> พื้นที่รับภาพ</h2><span id="sourceSummary" class="muted small">พร้อมเริ่มต้น</span></div>
+        <div class="camera-card" id="cameraCard">
+          <video id="video" autoplay playsinline muted aria-label="ภาพจากกล้อง"></video>
+          <canvas id="overlay" aria-label="จุดสำคัญของมือ"></canvas>
+          <div class="camera-top"><span class="source-pill" id="sourcePill"><span class="tiny-dot"></span> ยังไม่เปิดกล้อง</span><span class="camera-meta" id="handCount">0 มือ</span></div>
+          <div class="camera-empty" id="cameraEmpty">
+            <div class="hand-outline"><svg viewBox="0 0 150 160" fill="none" aria-hidden="true"><path d="M48 90V45c0-12 14-12 14 0v33-51c0-13 15-13 15 0v49-58c0-13 15-13 15 0v60-44c0-13 15-13 15 0v63l10-19c7-12 20-5 14 7l-22 45c-9 20-24 23-39 19-18-5-24-17-30-30L22 94c-7-10 5-18 13-9l13 16" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="77" cy="103" r="3" fill="currentColor"/><circle cx="62" cy="78" r="3" fill="currentColor"/><circle cx="92" cy="78" r="3" fill="currentColor"/><path d="m62 78 15 25 15-25m-15 25v25" stroke="currentColor" stroke-width="1.5" opacity=".4"/></svg></div>
+            <h3>บทสนทนาเริ่มที่มือของคุณ</h3><p>เปิดกล้อง แล้ววางมือให้อยู่ในกรอบ<br>ใช้แสงสว่างที่พอดี และเห็นนิ้วครบทั้งมือ</p>
+            <button class="button mint" id="startHero">เปิดกล้องเพื่อเริ่มทดลอง <span>↗</span></button>
+            <button class="text-button light" id="simulateHero">ลองดูด้วยข้อมูลจำลอง →</button>
+          </div>
+          <div class="frame-guide" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="record-overlay" id="recordOverlay" hidden><span id="recordText"></span><progress id="recordProgress" max="16" value="0"></progress></div>
+          <div class="camera-bottom"><span id="cameraHint">ภาพจากกล้องจะไม่ถูกส่งไปยังเซิร์ฟเวอร์</span><span id="fps">— FPS</span></div>
+        </div>
+        <div class="camera-controls"><button id="cameraButton" class="button primary">◉ เปิดกล้อง</button><button id="simulateButton" class="button secondary">▷ ข้อมูลจำลอง</button><button id="switchButton" class="button icon-button" aria-label="สลับกล้องหน้าและหลัง" title="สลับกล้อง" disabled>⇄</button><label class="toggle-label"><input id="landmarksToggle" type="checkbox" checked> แสดงจุดมือ</label></div>
+        <div class="camera-tip"><span>↗</span><p><strong>เริ่มง่าย ๆ ด้วยฝ่ามือเปิด</strong><br>ค้างท่าประมาณ 1 วินาที เพื่อให้ผลการรู้จำนิ่ง</p><span class="tip-hand">✋</span></div>
+      </div>
+      <div class="results-column">
+        <div class="section-top"><h2><span class="step">02</span> ผลการรู้จำ</h2><span class="live-label" id="liveLabel">รอรับภาพ</span></div>
+        <div class="result-card">
+          <div class="segmented" role="group" aria-label="เลือกโมเดล"><button id="basicMode" class="selected" aria-pressed="true">ท่าพื้นฐาน</button><button id="customMode" aria-pressed="false">โมเดลของฉัน</button></div>
+          <div class="result-type" id="modelType">MEDIAPIPE · 7 ท่าทดลอง</div>
+          <div class="result-icon" id="resultIcon">⌁</div><h3 id="resultLabel" aria-live="polite">รอท่ามือของคุณ</h3><p class="result-help" id="resultHelp">เปิดกล้อง หรือทดลองด้วยข้อมูลจำลอง</p>
+          <div class="confidence-top"><span>คะแนนความมั่นใจของโมเดล</span><strong id="confidence">—</strong></div><div class="meter"><span id="confidenceBar"></span></div>
+          <div id="alternatives" class="alternatives"></div>
+          <details class="recognition-settings"><summary>ตั้งค่าการรู้จำ <span>⌄</span></summary><label for="threshold">คะแนนขั้นต่ำ <output id="thresholdValue">75%</output></label><input id="threshold" type="range" min="50" max="95" value="75" step="5"><small>คะแนนนี้ไม่ใช่ค่าความแม่นยำจากชุดทดสอบ</small></details>
+          <button id="addResult" class="button secondary full" disabled>＋ เพิ่มผลนี้ในข้อความ</button>
+        </div>
+      </div>
+    </section>
+    <section class="transcript-section" aria-labelledby="transcriptHeading"><div class="section-top"><h2 id="transcriptHeading"><span class="step">03</span> ข้อความจากท่ามือ</h2><label class="toggle-label"><input id="autoAdd" type="checkbox" checked> เพิ่มเมื่อท่านิ่ง</label></div><div class="transcript-card"><div class="transcript-content" id="transcript" aria-live="polite"><span class="placeholder">คำที่เลือกจะปรากฏที่นี่…</span></div><div class="transcript-footer"><span class="small muted" id="tokenCount">0 คำ · ยังไม่ได้เรียบเรียงเป็นประโยค</span><div class="transcript-actions"><button class="text-button" id="speakButton" disabled>◖ อ่านออกเสียง</button><button class="text-button" id="copyButton" disabled>คัดลอก</button><button class="text-button" id="downloadText" disabled>บันทึก .txt</button><button class="text-button danger" id="clearText" disabled>ล้าง</button></div></div></div></section>
+    <section class="learning-section" id="learning" aria-labelledby="learningHeading"><div class="section-top"><h2 id="learningHeading"><span class="step">04</span> สร้างโมเดลของคุณ</h2><span class="muted small">MediaPipe → ลำดับการเคลื่อนไหว → LSTM</span></div><div class="learning-card"><div class="learning-intro"><div><h3>เริ่มจากคำที่คุณอยากสื่อสาร</h3><p>เพิ่มคำ เก็บตัวอย่างท่ามือ แล้วฝึกโมเดลในเบราว์เซอร์<br>ใช้คำและท่าที่ผู้ใช้ภาษามือไทยช่วยตรวจสอบก่อนนำไปอ้างอิง</p></div><span class="learning-symbol">✳</span></div><form id="labelForm" class="add-label-form"><label class="sr-only" for="labelInput">ชื่อคำหรือวลี</label><input id="labelInput" placeholder="ชื่อคำหรือวลี เช่น สวัสดี" maxlength="40" autocomplete="off" required><button class="button secondary" id="addLabel" type="submit">＋ เพิ่มคำ</button></form><div id="classes" class="class-grid"></div><div class="training-status" id="trainingStatus">เพิ่มอย่างน้อย 2 คำ และเก็บคำละ 3 คลิปเพื่อเริ่มทดลอง</div><progress class="training-progress" id="trainingProgress" max="25" value="0" hidden></progress><div class="learning-actions"><button class="button primary" id="trainButton" disabled>✳ ฝึกโมเดล LSTM</button><button class="button secondary" id="exportModel" disabled>บันทึกโมเดล</button><label class="button secondary file-label" id="importModelLabel">นำเข้าโมเดล<input type="file" id="importModel" accept=".json,application/json"></label><span class="action-spacer"></span><button class="text-button" id="exportData">ส่งออกชุดข้อมูล</button><label class="text-button file-label">นำเข้าชุดข้อมูล<input type="file" id="importData" accept=".json,application/json"></label></div><p class="learning-footnote">บันทึกเฉพาะพิกัดจุดมือในเบราว์เซอร์นี้ ควรส่งออกไฟล์สำรอง · โมเดลจำแนกได้เฉพาะคำที่ฝึก และอาจทายผิดเมื่อเจอท่านอกชุดข้อมูล</p></div></section>
+    <section class="guide-section" id="guide"><div class="section-top"><h2>จากการทดลอง สู่โครงงานของคุณ</h2><span class="muted small">QUICK START</span></div><div class="guide-grid"><article><span>01 / สังเกต</span><h3>ลองท่าพื้นฐาน</h3><p>กางมือ กำมือ หรือชูนิ้วโป้ง ดูจุดมือและผลรู้จำจากโมเดลสำเร็จรูป</p></article><article><span>02 / เรียนรู้</span><h3>เก็บท่าให้หลากหลาย</h3><p>หนึ่งคลิปใช้เวลาประมาณ 2 วินาที ทำซ้ำหลายครั้ง เปลี่ยนระยะและมุมเล็กน้อย</p></article><article><span>03 / ทดสอบ</span><h3>ลองกับคนที่ไม่เคยฝึก</h3><p>หลังฝึก เลือก “โมเดลของฉัน” แล้วทดสอบกับข้อมูลใหม่ เดโม่นี้ยังไม่มีคะแนนจากชุดทดสอบแยก</p></article></div><div class="gesture-list" id="gestureList"></div></section>
+    <footer class="page-footer"><span><strong>snapsign</strong> · research prototype</span><span>เห็นท่าทาง เข้าใจความเป็นไปได้ <span class="footer-spark">✳</span></span></footer>
+  </main>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script type="module" src="app.mjs"></script>
+</body>
+</html>
